@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Member', {
+    sequelize.define('member', {
         firstName: {
             type: DataTypes.TEXT,
             allowNull: false,

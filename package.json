@@ -6,6 +6,7 @@
   "author": "Luke Rucker <ruckerlh@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "dotenv": "^8.2.0",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
