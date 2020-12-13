@@ -15,6 +15,7 @@ router.use(members.routes(), members.allowedMethods())
 const sessions = new Router({ prefix: '/sessions' })
 sessions.get('/', SessionController.getMany)
 sessions.delete('/:id', SessionController.delete)
+sessions.patch('/:id/finish', SessionController.finish)
 router.use(sessions.routes(), sessions.allowedMethods())
 
 module.exports = router

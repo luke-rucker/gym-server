@@ -31,10 +31,7 @@ app.use(router.routes()).use(router.allowedMethods())
 
 // Centralized error logging
 app.on('error', function (err, ctx) {
-    // Only log non operational errors
-    if (err.isOperational !== undefined && !err.isOperational) {
-        console.error(err)
-    }
+    console.error(err)
 })
 
 process.on('unhandledRejection', function (reason) {

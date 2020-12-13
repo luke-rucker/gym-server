@@ -12,7 +12,7 @@ module.exports = {
     },
     getById: async function (ctx) {
         const member = await models.member.findByPk(ctx.params.id)
-        ctx.assert(member, 404, `member ${ctx.params.id} does not exist`)
+        ctx.assert(member, 404, 'Member does not exist')
         ctx.body = member
     },
     delete: async function (ctx) {
@@ -28,7 +28,7 @@ module.exports = {
     },
     getSessions: async function (ctx) {
         const member = await models.member.findByPk(ctx.params.id)
-        ctx.assert(member, 404, `member ${ctx.params.id} does not exist`)
+        ctx.assert(member, 404, 'Member does not exist')
         ctx.body = await member.getSessions()
     },
 }

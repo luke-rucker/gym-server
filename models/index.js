@@ -15,7 +15,7 @@ for (const modelDefiner of modelDefiners) {
 
 // Only sync when not in production
 if (process.env.NODE_ENV !== 'production') {
-    sequelize.sync({ force: true })
+    sequelize.sync({ alter: true })
 }
 
 // Execute any extra setup after the models are defined, such as adding associations
