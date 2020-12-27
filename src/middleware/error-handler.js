@@ -4,14 +4,11 @@ function errorHandler(options) {
         try {
             await next()
         } catch (err) {
-            const body = {
-                message: err.message || 'Something went wrong!',
-            }
-            if (exposeStack) {
-                body.stack = err.stack
-            }
             ctx.status = err.status || 500
-            ctx.body = body
+            ctx.body = {
+                message: err.message || 'Something went wrong!',
+                ...(exposeStack ? null : { stack: err.stack }),
+            }
             ctx.app.emit('error', err, ctx)
         }
     }

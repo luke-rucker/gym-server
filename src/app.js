@@ -44,18 +44,4 @@ app.on('error', function (err, ctx) {
 
 // Configure port and start server
 const PORT = process.env.PORT || 3001
-const server = app.listen(PORT, () => console.log(`listening on ${PORT}`))
-
-// Register process events
-process.on('uncaughtException', function (err) {
-    console.error(err)
-})
-
-process.on('unhandledRejection', function (reason) {
-    console.error(reason)
-})
-
-process.on('SIGTERM', async function () {
-    server.close()
-    process.exit(0)
-})
+app.listen(PORT, () => console.log(`Listening on ${PORT}`))
