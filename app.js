@@ -1,11 +1,29 @@
 require('dotenv').config()
 const Koa = require('koa')
+const session = require('koa-session')
 const cors = require('@koa/cors')
 const bodyParser = require('koa-bodyparser')
 const router = require('./routers')
+const errorHandler = require('./middleware/error-handler')
 
 // App config
 const app = new Koa()
+
+// Session middleware
+app.keys = [process.env.SESSION_SECRET]
+
+app.use(
+    session(
+        {
+            maxAge: parseInt(process.env.SESSION_MAX_AGE),
+            httpOnly: true,
+            signed: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: true,
+        },
+        app
+    )
+)
 
 // Enable cors
 app.use(cors())
@@ -14,17 +32,7 @@ app.use(cors())
 app.use(bodyParser())
 
 // Error handling middleware
-app.use(async function (ctx, next) {
-    try {
-        await next()
-    } catch (err) {
-        ctx.status = err.status || 500
-        ctx.body = {
-            message: err.message || 'something went wrong!',
-        }
-        ctx.app.emit('error', err, ctx)
-    }
-})
+app.use(errorHandler({ exposeStack: process.env.NODE_ENV !== 'production' }))
 
 // Mount routes
 app.use(router.routes()).use(router.allowedMethods())
@@ -34,11 +42,20 @@ app.on('error', function (err, ctx) {
     console.error(err)
 })
 
-process.on('unhandledRejection', function (reason) {
-    console.error(reason)
-    process.exit(1)
-})
-
 // Configure port and start server
 const PORT = process.env.PORT || 3001
-app.listen(PORT, () => console.log(`listening on ${PORT}`))
+const server = app.listen(PORT, () => console.log(`listening on ${PORT}`))
+
+// Register process events
+process.on('uncaughtException', function (err) {
+    console.error(err)
+})
+
+process.on('unhandledRejection', function (reason) {
+    console.error(reason)
+})
+
+process.on('SIGTERM', async function () {
+    server.close()
+    process.exit(0)
+})

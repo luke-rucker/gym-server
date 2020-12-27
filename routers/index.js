@@ -1,21 +1,18 @@
-const Router = require('koa-router')
-const { MemberController, SessionController } = require('../controllers')
+const Router = require('@koa/router')
+
+const auth = require('./auth.router')
+const users = require('./user.router')
+const members = require('./member.router')
+const sessions = require('./session.router')
+
+const isAuth = require('../middleware/is-auth')
+const isAdmin = require('../middleware/is-admin')
 
 const router = new Router({ prefix: '/v1' })
 
-const members = new Router({ prefix: '/members' })
-members.post('/', MemberController.create)
-members.get('/', MemberController.getMany)
-members.get('/:id', MemberController.getById)
-members.delete('/:id', MemberController.delete)
-members.post('/:id/sessions', MemberController.createSession)
-members.get('/:id/sessions', MemberController.getSessions)
-router.use(members.routes(), members.allowedMethods())
-
-const sessions = new Router({ prefix: '/sessions' })
-sessions.get('/', SessionController.getMany)
-sessions.delete('/:id', SessionController.delete)
-sessions.patch('/:id/finish', SessionController.finish)
-router.use(sessions.routes(), sessions.allowedMethods())
+router.use('/auth', auth.routes())
+router.use('/users', isAuth, isAdmin, users.routes())
+router.use('/members', isAuth, members.routes())
+router.use('/sessions', isAuth, sessions.routes())
 
 module.exports = router
