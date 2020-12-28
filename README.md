@@ -5,7 +5,7 @@ Koa and Prisma powered Node.js backend for jub-gym
 To get the server running locally:
 
 - Clone this repo
-- Run `docker-compose up` to start Postgres
+- Run `docker-compose up -d` to start Postgres
 - Use `sample.env` to create a `.env` file
 - Run `yarn` to install dependencies
 - Rum `yarn prisma generate` to generate the Prisma Client
