@@ -1,10 +1,11 @@
-const prisma = require('../prisma')
+const db = require('../db')
 const { verifyPassword } = require('../util')
 
 module.exports = {
     login: async function (ctx) {
         const { email, password } = ctx.request.body
-        const { passwordHash, ...userInfo } = await prisma.user.findUnique({
+
+        const user = await db.user.findUnique({
             where: { email: email },
             select: {
                 id: true,
@@ -16,8 +17,9 @@ module.exports = {
                 role: true,
             },
         })
-        ctx.assert(userInfo, 401, 'Wrong email or password.')
+        ctx.assert(user, 401, 'Wrong email or password.')
 
+        const { passwordHash, ...userInfo } = user
         const passwordValid = await verifyPassword(password, passwordHash)
         ctx.assert(passwordValid, 401, 'Wrong email or password.')
 

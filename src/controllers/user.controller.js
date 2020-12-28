@@ -1,4 +1,4 @@
-const prisma = require('../prisma')
+const db = require('../db')
 const { hashPassword } = require('../util')
 
 module.exports = {
@@ -6,14 +6,14 @@ module.exports = {
         const { password, ...userInfo } = ctx.request.body
         const passwordHash = await hashPassword(password)
 
-        const createdUser = await prisma.user.create({
+        const createdUser = await db.user.create({
             data: { passwordHash, ...userInfo },
         })
         ctx.status = 201
         ctx.body = createdUser
     },
     getMany: async function (ctx) {
-        ctx.body = await prisma.user.findMany({
+        ctx.body = await db.user.findMany({
             select: {
                 id: true,
                 firstName: true,
@@ -28,7 +28,7 @@ module.exports = {
     },
     delete: async function (ctx) {
         try {
-            await prisma.user.delete({
+            await db.user.delete({
                 where: {
                     id: parseInt(ctx.params.id),
                 },

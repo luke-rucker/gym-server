@@ -1,11 +1,11 @@
-const prisma = require('../prisma')
+const db = require('../db')
 
 module.exports = {
     create: async function (ctx) {
-        const newMember = await prisma.member.create({
+        const newMember = await db.member.create({
             data: {
                 ...ctx.request.body,
-                createdBy: { connect: { id: 2 } },
+                createdBy: { connect: { id: ctx.session.user.id } },
             },
         })
         ctx.status = 201
@@ -14,10 +14,10 @@ module.exports = {
         }
     },
     getMany: async function (ctx) {
-        ctx.body = await prisma.member.findMany()
+        ctx.body = await db.member.findMany()
     },
     getById: async function (ctx) {
-        const member = await prisma.member.findUnique({
+        const member = await db.member.findUnique({
             where: { id: parseInt(ctx.params.id) },
         })
         ctx.assert(member, 404, 'Member does not exist.')
@@ -25,7 +25,7 @@ module.exports = {
     },
     delete: async function (ctx) {
         try {
-            await prisma.member.delete({
+            await db.member.delete({
                 where: {
                     id: parseInt(ctx.params.id),
                 },
@@ -41,7 +41,7 @@ module.exports = {
         }
     },
     createSession: async function (ctx) {
-        const createdSession = await prisma.session.create({
+        const createdSession = await db.session.create({
             data: { member: { connect: { id: parseInt(ctx.params.id) } } },
             select: { id: true, memberId: true, start: true },
         })
@@ -49,7 +49,7 @@ module.exports = {
         ctx.body = createdSession
     },
     getSessions: async function (ctx) {
-        ctx.body = await prisma.session.findMany({
+        ctx.body = await db.session.findMany({
             where: { memberId: parseInt(ctx.params.id) },
             select: { id: true, start: true, finish: true },
         })

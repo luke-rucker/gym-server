@@ -1,12 +1,12 @@
-const prisma = require('../prisma')
+const db = require('../db')
 
 module.exports = {
     getMany: async function (ctx) {
-        ctx.body = await prisma.session.findMany()
+        ctx.body = await db.session.findMany()
     },
     delete: async function (ctx) {
         try {
-            await prisma.session.delete({
+            await db.session.delete({
                 where: {
                     id: parseInt(ctx.params.id),
                 },
@@ -22,12 +22,14 @@ module.exports = {
         }
     },
     finish: async function (ctx) {
-        const session = await prisma.session.findUnique({
+        const session = await db.session.findUnique({
             where: { id: parseInt(ctx.params.id) },
         })
+
         ctx.assert(session, 404, 'Session does not exist.')
         ctx.assert(!session.finish, 400, 'Session is already finished.')
-        await prisma.session.update({
+
+        await db.session.update({
             data: { finish: new Date() },
             where: { id: parseInt(ctx.params.id) },
         })

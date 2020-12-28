@@ -1,7 +1,7 @@
 {
   "name": "gym-server",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "src/app.js",
   "repository": "https://github.com/jub-gym/gym-server.git",
   "author": "Luke Rucker <ruckerlh@gmail.com>",
   "license": "MIT",
@@ -10,16 +10,19 @@
     "@koa/router": "^10.0.0",
     "@prisma/client": "^2.13.1",
     "bcrypt": "^5.0.0",
-    "dotenv": "^8.2.0",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-session": "^6.1.0"
   },
   "devDependencies": {
     "@prisma/cli": "^2.13.1",
+    "dotenv": "^8.2.0",
     "nodemon": "^2.0.6"
   },
   "scripts": {
-    "start": "nodemon src/app.js"
+    "start": "nodemon src/app.js",
+  },
+  "prisma": {
+    "schema": "src/db/schema.prisma"
   }
 }

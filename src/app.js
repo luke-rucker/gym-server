@@ -1,10 +1,15 @@
-require('dotenv').config()
 const Koa = require('koa')
 const session = require('koa-session')
 const cors = require('@koa/cors')
 const bodyParser = require('koa-bodyparser')
 const router = require('./routers')
 const errorHandler = require('./middleware/error-handler')
+
+const isProduction = process.env.NODE_ENV === 'production'
+
+if (!isProduction) {
+    require('dotenv').config()
+}
 
 // App config
 const app = new Koa()
@@ -18,7 +23,7 @@ app.use(
             maxAge: parseInt(process.env.SESSION_MAX_AGE),
             httpOnly: true,
             signed: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: isProduction,
             sameSite: true,
         },
         app
@@ -32,7 +37,7 @@ app.use(cors())
 app.use(bodyParser())
 
 // Error handling middleware
-app.use(errorHandler({ exposeStack: process.env.NODE_ENV !== 'production' }))
+app.use(errorHandler({ exposeStack: !isProduction }))
 
 // Mount routes
 app.use(router.routes()).use(router.allowedMethods())
