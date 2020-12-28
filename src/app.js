@@ -20,6 +20,7 @@ app.keys = [process.env.SESSION_SECRET]
 app.use(
     session(
         {
+            key: 'sess',
             maxAge: parseInt(process.env.SESSION_MAX_AGE),
             httpOnly: true,
             signed: true,
