@@ -21,6 +21,7 @@
   },
   "scripts": {
     "start": "nodemon src/app.js",
+    "seed": "node src/db/seed.js"
   },
   "prisma": {
     "schema": "src/db/schema.prisma"
