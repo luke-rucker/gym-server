@@ -2,7 +2,7 @@
   "name": "gym-server",
   "version": "1.0.0",
   "main": "src/app.js",
-  "repository": "https://github.com/jub-gym/gym-server.git",
+  "repository": "https://github.com/luke-rucker/gym-server.git",
   "author": "Luke Rucker <ruckerlh@gmail.com>",
   "license": "MIT",
   "dependencies": {
