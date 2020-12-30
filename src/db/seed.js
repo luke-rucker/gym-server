@@ -20,10 +20,11 @@ async function createSanta() {
         const { password, ...rest } = santaUser
         await prisma.user.create({
             data: {
-                rest,
                 passwordHash: await hashPassword(password),
+                ...rest,
             },
         })
+        console.log('Created Santa User.')
     } else {
         console.log('Santa User already exists.')
     }
