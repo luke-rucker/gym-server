@@ -33,5 +33,5 @@ jobs:
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-          tags: luke-rucker/gym-server:latest  
+          tags: ghcr.io/luke-rucker/gym-server:latest  
 
