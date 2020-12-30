@@ -9,6 +9,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 if (!isProduction) {
     require('dotenv').config()
+    require('./db/seed')()
 }
 
 // App config
