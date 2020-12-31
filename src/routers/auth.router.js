@@ -1,10 +1,9 @@
 const Router = require('@koa/router')
 const { AuthController } = require('../controllers')
-const isAuth = require('../middleware/is-auth')
 
 const auth = new Router()
 
 auth.post('/login', AuthController.login)
-auth.delete('/logout', isAuth, AuthController.logout)
+auth.delete('/logout', AuthController.logout)
 
-module.exports = auth
+module.exports = auth.routes()

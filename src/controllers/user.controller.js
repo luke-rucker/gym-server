@@ -1,6 +1,17 @@
 const db = require('../db')
 const { hashPassword } = require('../util')
 
+const userSelect = {
+    id: true,
+    firstName: true,
+    lastName: true,
+    email: true,
+    profileImageUrl: true,
+    role: true,
+    createdAt: true,
+    updatedAt: true,
+}
+
 module.exports = {
     create: async function (ctx) {
         const { password, ...userInfo } = ctx.request.body
@@ -12,18 +23,15 @@ module.exports = {
         ctx.status = 201
         ctx.body = createdUser
     },
+    me: async function (ctx) {
+        ctx.body = await db.user.findUnique({
+            where: { id: ctx.session.user.id },
+            select: userSelect,
+        })
+    },
     getMany: async function (ctx) {
         ctx.body = await db.user.findMany({
-            select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-                profileImageUrl: true,
-                role: true,
-                createdAt: true,
-                updatedAt: true,
-            },
+            select: userSelect,
         })
     },
     delete: async function (ctx) {
