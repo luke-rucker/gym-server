@@ -6,7 +6,6 @@
   "author": "Luke Rucker <ruckerlh@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@koa/cors": "^3.1.0",
     "@koa/router": "^10.0.0",
     "@prisma/client": "^2.13.1",
     "bcrypt": "^5.0.0",

@@ -25,8 +25,8 @@ module.exports = {
         ctx.assert(user, 401, 'Wrong email or password.')
 
         const { passwordHash, ...userInfo } = user
-        const passwordValid = await verifyPassword(password, passwordHash)
-        ctx.assert(passwordValid, 401, 'Wrong email or password.')
+        const passwordIsValid = await verifyPassword(password, passwordHash)
+        ctx.assert(passwordIsValid, 401, 'Wrong email or password.')
 
         const { token, expiresAt } = createToken(userInfo)
         const { refreshToken, refreshExpiresAt } = createRefreshToken(userInfo)
@@ -51,11 +51,10 @@ module.exports = {
         const decodedToken = verifyRefreshToken(refreshToken)
         ctx.assert(decodedToken, 401, 'Not Authorized.')
 
-        const role = await db.user.findUnique({
+        const user = await db.user.findUnique({
             where: { id: decodedToken.sub },
-            select: { role: true },
+            select: { id: true, role: true },
         })
-        const user = { id: decodedToken.sub, role }
 
         const { token, expiresAt } = createToken(user)
         const {
