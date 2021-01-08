@@ -5,7 +5,7 @@ module.exports = {
         const newMember = await db.member.create({
             data: {
                 ...ctx.request.body,
-                createdBy: { connect: { id: ctx.session.user.id } },
+                createdBy: { connect: { id: ctx.state.user.id } },
             },
         })
         ctx.status = 201

@@ -1,6 +1,6 @@
 function isAdmin() {
     return async function (ctx, next) {
-        const { role } = ctx.session.user
+        const { role } = ctx.state.user
         if (role !== 'ADMIN') {
             ctx.throw(403, 'Invalid permissions.')
         }

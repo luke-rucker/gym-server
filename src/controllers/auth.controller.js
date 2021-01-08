@@ -1,5 +1,10 @@
 const db = require('../db')
-const { verifyPassword } = require('../util')
+const {
+    verifyPassword,
+    createToken,
+    createRefreshToken,
+    verifyRefreshToken,
+} = require('../util')
 
 module.exports = {
     login: async function (ctx) {
@@ -23,11 +28,54 @@ module.exports = {
         const passwordValid = await verifyPassword(password, passwordHash)
         ctx.assert(passwordValid, 401, 'Wrong email or password.')
 
-        ctx.session.user = { id: userInfo.id, role: userInfo.role }
-        ctx.body = userInfo
+        const { token, expiresAt } = createToken(userInfo)
+        const { refreshToken, refreshExpiresAt } = createRefreshToken(userInfo)
+
+        ctx.cookies.set('refreshToken', refreshToken, {
+            httpOnly: true,
+            maxAge: refreshExpiresAt,
+            path: '/auth/token/refresh',
+        })
+
+        ctx.body = {
+            message: 'Authentication Successful',
+            token,
+            expiresAt,
+            userInfo,
+        }
     },
-    logout: async function (ctx) {
-        ctx.session = null
+    refreshToken: async function (ctx) {
+        const refreshToken = ctx.cookies.get('refreshToken')
+        ctx.assert(refreshToken, 401, 'Not Authorized.')
+
+        const decodedToken = verifyRefreshToken(refreshToken)
+        ctx.assert(decodedToken, 401, 'Not Authorized.')
+
+        const role = await db.user.findUnique({
+            where: { id: decodedToken.sub },
+            select: { role: true },
+        })
+        const user = { id: decodedToken.sub, role }
+
+        const { token, expiresAt } = createToken(user)
+        const {
+            refreshToken: newRefreshToken,
+            refreshExpiresAt,
+        } = createRefreshToken(user)
+
+        ctx.cookies.set('refreshToken', newRefreshToken, {
+            httpOnly: true,
+            maxAge: refreshExpiresAt,
+            path: '/auth/token/refresh',
+        })
+
+        ctx.body = {
+            token,
+            expiresAt,
+        }
+    },
+    invalidateToken: async function (ctx) {
+        ctx.cookies.set('refreshToken', null)
         ctx.status = 204
     },
 }

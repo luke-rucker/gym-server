@@ -20,12 +20,13 @@ module.exports = {
         const createdUser = await db.user.create({
             data: { passwordHash, ...userInfo },
         })
+
         ctx.status = 201
         ctx.body = createdUser
     },
     me: async function (ctx) {
         ctx.body = await db.user.findUnique({
-            where: { id: ctx.session.user.id },
+            where: { id: ctx.state.user.id },
             select: userSelect,
         })
     },

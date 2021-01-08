@@ -6,7 +6,8 @@ function errorHandler(options) {
         } catch (err) {
             ctx.status = err.status || 500
             ctx.body = {
-                message: err.message || 'Something went wrong!',
+                message:
+                    ctx.status === 500 ? 'Something went wrong!' : err.message,
                 ...(exposeStack ? null : { stack: err.stack }),
             }
             ctx.app.emit('error', err, ctx)

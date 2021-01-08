@@ -1,5 +1,4 @@
 const Koa = require('koa')
-const session = require('koa-session')
 const cors = require('@koa/cors')
 const bodyParser = require('koa-bodyparser')
 const router = require('./routers')
@@ -14,23 +13,6 @@ if (!isProduction) {
 
 // App config
 const app = new Koa()
-
-// Session middleware
-app.keys = [process.env.SESSION_SECRET]
-
-app.use(
-    session(
-        {
-            key: 'sess',
-            maxAge: parseInt(process.env.SESSION_MAX_AGE),
-            httpOnly: true,
-            signed: true,
-            secure: isProduction,
-            sameSite: true,
-        },
-        app
-    )
-)
 
 // Enable cors
 app.use(cors())
