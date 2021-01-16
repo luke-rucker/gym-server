@@ -4,6 +4,7 @@ const {
     createToken,
     createRefreshToken,
     verifyRefreshToken,
+    sendRefreshToken,
 } = require('../util')
 
 module.exports = {
@@ -31,11 +32,7 @@ module.exports = {
         const { token, expiresAt } = createToken(userInfo)
         const { refreshToken, refreshExpiresAt } = createRefreshToken(userInfo)
 
-        ctx.cookies.set('refreshToken', refreshToken, {
-            httpOnly: true,
-            maxAge: refreshExpiresAt,
-            path: '/auth/token/refresh',
-        })
+        sendRefreshToken(ctx, refreshToken, refreshExpiresAt)
 
         ctx.body = {
             message: 'Authentication Successful',
@@ -62,11 +59,7 @@ module.exports = {
             refreshExpiresAt,
         } = createRefreshToken(user)
 
-        ctx.cookies.set('refreshToken', newRefreshToken, {
-            httpOnly: true,
-            maxAge: refreshExpiresAt,
-            path: '/auth/token/refresh',
-        })
+        sendRefreshToken(ctx, newRefreshToken, refreshExpiresAt)
 
         ctx.body = {
             token,

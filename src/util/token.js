@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const algorithm = 'HS512'
 
 function createToken(user) {
-    // Two hours from now
+    // Two hours from now in seconds
     const expiresAt = Math.floor(Date.now() / 1000) + 2 * 60 * 60
     const token = jwt.sign(
         {
@@ -18,11 +18,11 @@ function createToken(user) {
             algorithm,
         }
     )
-    return { token, expiresAt }
+    return { token, expiresAt: expiresAt * 1000 }
 }
 
 function createRefreshToken(user) {
-    // One week from now
+    // One week from now in seconds
     const refreshExpiresAt = Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
     const refreshToken = jwt.sign(
         {
@@ -36,7 +36,15 @@ function createRefreshToken(user) {
             algorithm,
         }
     )
-    return { refreshToken, refreshExpiresAt }
+    return { refreshToken, refreshExpiresAt: refreshExpiresAt * 1000 }
+}
+
+function sendRefreshToken(ctx, refreshToken, refreshExpiresAt) {
+    ctx.cookies.set('refreshToken', refreshToken, {
+        httpOnly: true,
+        maxAge: refreshExpiresAt,
+        path: '/api/auth/token/refresh',
+    })
 }
 
 function verifyToken(token, secret) {
@@ -62,6 +70,7 @@ function verifyRefreshToken(token) {
 module.exports = {
     createToken,
     createRefreshToken,
+    sendRefreshToken,
     verifyAccessToken,
     verifyRefreshToken,
 }
