@@ -3,44 +3,47 @@ const { hashPassword } = require('../util')
 
 const prisma = new PrismaClient()
 
-async function createSanta() {
-    const santaUser = {
-        firstName: 'Santa',
-        lastName: 'Claus',
-        email: 'santa@moretoys4u.com',
-        password: 'hohoho',
-        role: 'ADMIN',
-    }
+const santa = {
+    firstName: 'Santa',
+    lastName: 'Claus',
+    email: 'santa@moretoys4u.com',
+    profileImageUrl:
+        'https://pbs.twimg.com/profile_images/1316013567305342977/2wd-FZ63_400x400.jpg',
+    password: 'hohoho',
+    role: 'ADMIN',
+}
 
-    const santaAlreadyExists = await prisma.user.findUnique({
-        where: { email: santaUser.email },
+async function seed() {
+    try {
+        await insertUser(santa)
+    } catch (error) {
+        console.error(error)
+    } finally {
+        await prisma.$disconnect()
+    }
+}
+
+async function insertUser(user) {
+    const userExists = await prisma.user.findUnique({
+        where: { email: user.email },
     })
 
-    if (!santaAlreadyExists) {
-        const { password, ...rest } = santaUser
+    if (!userExists) {
+        const { password, ...rest } = user
         await prisma.user.create({
             data: {
                 passwordHash: await hashPassword(password),
                 ...rest,
             },
         })
-        console.log('Created Santa User.')
     } else {
-        console.log('Santa User already exists.')
+        console.log(`User ${user.email} already exists.`)
     }
 
     console.log(
         'Login with:',
-        JSON.stringify({ email: santaUser.email, password: santaUser.password })
+        JSON.stringify({ email: user.email, password: user.password }, null, 2)
     )
-}
-
-async function seed() {
-    createSanta()
-        .catch((e) => console.error(e))
-        .finally(async () => {
-            await prisma.$disconnect()
-        })
 }
 
 module.exports = seed
