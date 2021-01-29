@@ -39,7 +39,7 @@ module.exports = {
         try {
             await db.user.delete({
                 where: {
-                    id: parseInt(ctx.params.id),
+                    id: parseInt(ctx.params.userId),
                 },
             })
             ctx.status = 204

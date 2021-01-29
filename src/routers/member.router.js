@@ -5,10 +5,10 @@ const members = new Router()
 
 members.post('/', MemberController.create)
 members.get('/', MemberController.getMany)
-members.get('/:id', MemberController.getById)
-members.delete('/:id', MemberController.delete)
+members.get('/:memberId', MemberController.getById)
+members.delete('/:memberId', MemberController.delete)
 
-members.post('/:id/sessions', MemberController.createSession)
-members.get('/:id/sessions', MemberController.getSessions)
+members.post('/:memberId/sessions', MemberController.createSession)
+members.get('/:memberId/sessions', MemberController.getSessions)
 
 module.exports = members.routes()

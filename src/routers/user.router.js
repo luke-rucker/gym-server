@@ -7,6 +7,6 @@ const users = new Router()
 users.post('/', isAdmin(), UserController.create)
 users.get('/me', UserController.me)
 users.get('/', isAdmin(), UserController.getMany)
-users.delete('/:id', isAdmin(), UserController.delete)
+users.delete('/:userId', isAdmin(), UserController.delete)
 
 module.exports = users.routes()

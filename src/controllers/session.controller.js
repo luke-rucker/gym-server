@@ -8,7 +8,7 @@ module.exports = {
         try {
             await db.session.delete({
                 where: {
-                    id: parseInt(ctx.params.id),
+                    id: parseInt(ctx.params.sessionId),
                 },
             })
             ctx.status = 204
@@ -23,7 +23,7 @@ module.exports = {
     },
     finish: async function (ctx) {
         const session = await db.session.findUnique({
-            where: { id: parseInt(ctx.params.id) },
+            where: { id: parseInt(ctx.params.sessionId) },
         })
 
         ctx.assert(session, 404, 'Session does not exist.')
@@ -31,7 +31,7 @@ module.exports = {
 
         await db.session.update({
             data: { finish: new Date() },
-            where: { id: parseInt(ctx.params.id) },
+            where: { id: parseInt(ctx.params.sessionId) },
         })
         ctx.status = 204
     },

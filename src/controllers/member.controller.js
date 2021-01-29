@@ -18,7 +18,7 @@ module.exports = {
     },
     getById: async function (ctx) {
         const member = await db.member.findUnique({
-            where: { id: parseInt(ctx.params.id) },
+            where: { id: parseInt(ctx.params.memberId) },
         })
         ctx.assert(member, 404, 'Member does not exist.')
         ctx.body = member
@@ -27,7 +27,7 @@ module.exports = {
         try {
             await db.member.delete({
                 where: {
-                    id: parseInt(ctx.params.id),
+                    id: parseInt(ctx.params.memberId),
                 },
             })
             ctx.status = 204
@@ -42,7 +42,9 @@ module.exports = {
     },
     createSession: async function (ctx) {
         const createdSession = await db.session.create({
-            data: { member: { connect: { id: parseInt(ctx.params.id) } } },
+            data: {
+                member: { connect: { id: parseInt(ctx.params.memberId) } },
+            },
             select: { id: true, memberId: true, start: true },
         })
         ctx.status = 201
@@ -50,7 +52,7 @@ module.exports = {
     },
     getSessions: async function (ctx) {
         ctx.body = await db.session.findMany({
-            where: { memberId: parseInt(ctx.params.id) },
+            where: { memberId: parseInt(ctx.params.memberId) },
             select: { id: true, start: true, finish: true },
         })
     },
