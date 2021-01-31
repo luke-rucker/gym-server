@@ -2,6 +2,15 @@ const db = require('../db')
 
 module.exports = {
     create: async function (ctx) {
+        const memberWithSameEmail = await db.member.findUnique({
+            where: { email: ctx.request.body.email },
+        })
+        ctx.assert(
+            !memberWithSameEmail,
+            400,
+            `A member with the email ${ctx.request.body.email} already exists.`
+        )
+
         const newMember = await db.member.create({
             data: {
                 ...ctx.request.body,
