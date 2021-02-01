@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken')
 const algorithm = 'HS512'
 
 function createToken(user) {
-    // Two hours from now in seconds
-    const expiresAt = Math.floor(Date.now() / 1000) + 2 * 60 * 60
+    // Three hours from now in seconds
+    const expiresAt = Math.floor(Date.now() / 1000) + 3 * 60 * 60
     const token = jwt.sign(
         {
             sub: user.id,
@@ -13,7 +13,7 @@ function createToken(user) {
             aud: 'www.jub-gym.com',
             exp: expiresAt,
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        process.env.JWT_SECRET,
         {
             algorithm,
         }
@@ -21,35 +21,9 @@ function createToken(user) {
     return { token, expiresAt: expiresAt * 1000 }
 }
 
-function createRefreshToken(user) {
-    // One week from now in seconds
-    const refreshExpiresAt = Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
-    const refreshToken = jwt.sign(
-        {
-            sub: user.id,
-            iss: 'www.jub-gym.com',
-            aud: 'www.jub-gym.com',
-            exp: refreshExpiresAt,
-        },
-        process.env.REFRESH_TOKEN_SECRET,
-        {
-            algorithm,
-        }
-    )
-    return { refreshToken, refreshExpiresAt: refreshExpiresAt * 1000 }
-}
-
-function sendRefreshToken(ctx, refreshToken, refreshExpiresAt) {
-    ctx.cookies.set('refreshToken', refreshToken, {
-        httpOnly: true,
-        maxAge: refreshExpiresAt,
-        path: '/api/auth/token/refresh',
-    })
-}
-
-function verifyToken(token, secret) {
+function verifyToken(token) {
     try {
-        return jwt.verify(token, secret, {
+        return jwt.verify(token, process.env.JWT_SECRET, {
             algorithms: [algorithm],
             audience: 'www.jub-gym.com',
             issuer: 'www.jub-gym.com',
@@ -59,18 +33,7 @@ function verifyToken(token, secret) {
     }
 }
 
-function verifyAccessToken(token) {
-    return verifyToken(token, process.env.ACCESS_TOKEN_SECRET)
-}
-
-function verifyRefreshToken(token) {
-    return verifyToken(token, process.env.REFRESH_TOKEN_SECRET)
-}
-
 module.exports = {
     createToken,
-    createRefreshToken,
-    sendRefreshToken,
-    verifyAccessToken,
-    verifyRefreshToken,
+    verifyToken,
 }

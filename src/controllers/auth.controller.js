@@ -1,11 +1,5 @@
 const db = require('../db')
-const {
-    verifyPassword,
-    createToken,
-    createRefreshToken,
-    verifyRefreshToken,
-    sendRefreshToken,
-} = require('../util')
+const { verifyPassword, createToken } = require('../util')
 
 module.exports = {
     login: async function (ctx) {
@@ -30,9 +24,6 @@ module.exports = {
         ctx.assert(passwordIsValid, 401, 'Wrong email or password.')
 
         const { token, expiresAt } = createToken(userInfo)
-        const { refreshToken, refreshExpiresAt } = createRefreshToken(userInfo)
-
-        sendRefreshToken(ctx, refreshToken, refreshExpiresAt)
 
         ctx.body = {
             message: 'Authentication Successful',
@@ -40,34 +31,5 @@ module.exports = {
             expiresAt,
             userInfo,
         }
-    },
-    refreshToken: async function (ctx) {
-        const refreshToken = ctx.cookies.get('refreshToken')
-        ctx.assert(refreshToken, 401, 'Not Authorized.')
-
-        const decodedToken = verifyRefreshToken(refreshToken)
-        ctx.assert(decodedToken, 401, 'Not Authorized.')
-
-        const user = await db.user.findUnique({
-            where: { id: decodedToken.sub },
-            select: { id: true, role: true },
-        })
-
-        const { token, expiresAt } = createToken(user)
-        const {
-            refreshToken: newRefreshToken,
-            refreshExpiresAt,
-        } = createRefreshToken(user)
-
-        sendRefreshToken(ctx, newRefreshToken, refreshExpiresAt)
-
-        ctx.body = {
-            token,
-            expiresAt,
-        }
-    },
-    invalidateToken: async function (ctx) {
-        ctx.cookies.set('refreshToken', null)
-        ctx.status = 204
     },
 }

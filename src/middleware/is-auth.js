@@ -1,10 +1,10 @@
-const { verifyAccessToken } = require('../util')
+const { verifyToken } = require('../util')
 
 function isAuth() {
     return async function (ctx, next) {
         const token = getTokenFromHeader(ctx)
 
-        const decodedToken = verifyAccessToken(token)
+        const decodedToken = verifyToken(token)
         ctx.assert(decodedToken, 401, 'Not Authorized.')
 
         ctx.state.user = {
