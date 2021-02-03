@@ -1,5 +1,5 @@
 const Router = require('@koa/router')
-const db = require('../../db')
+const db = require('../db')
 
 const sessions = new Router()
 

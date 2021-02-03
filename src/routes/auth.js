@@ -1,6 +1,6 @@
 const Router = require('@koa/router')
-const db = require('../../db')
-const { verifyPassword, createToken } = require('../../util')
+const db = require('../db')
+const { verifyPassword, createToken } = require('../util')
 
 const auth = new Router()
 

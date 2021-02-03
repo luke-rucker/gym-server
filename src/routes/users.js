@@ -1,7 +1,7 @@
 const Router = require('@koa/router')
-const db = require('../../db')
-const isAdmin = require('../../middleware/is-admin')
-const { hashPassword } = require('../../util')
+const db = require('../db')
+const isAdmin = require('../middleware/is-admin')
+const { hashPassword } = require('../util')
 
 const users = new Router()
 
