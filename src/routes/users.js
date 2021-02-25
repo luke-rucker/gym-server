@@ -37,7 +37,14 @@ users.get('/', isAdmin(), async function (ctx) {
 users.get('/me', async function (ctx) {
     ctx.body = await db.user.findUnique({
         where: { id: ctx.state.user.id },
-        select: userSelect,
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            profileImageUrl: true,
+            role: true,
+        },
     })
 })
 
