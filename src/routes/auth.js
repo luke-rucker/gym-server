@@ -27,12 +27,21 @@ auth.post('/login', async function (ctx) {
 
     const { token, expiresAt } = createToken(userInfo)
 
+    ctx.cookies.set('token', token, {
+        httpOnly: true,
+        maxAge: expiresAt,
+        path: '/api',
+        sameSite: 'true',
+    })
+
     ctx.body = {
-        message: 'Authentication Successful',
-        token,
         expiresAt,
-        userInfo,
     }
+})
+
+auth.delete('/logout', async function (ctx) {
+    ctx.cookies.set('token', null)
+    ctx.status = 204
 })
 
 module.exports = auth.routes()
