@@ -31,7 +31,7 @@ auth.post('/login', async function (ctx) {
         httpOnly: true,
         maxAge: expiresAt,
         path: '/api',
-        sameSite: 'true',
+        sameSite: 'strict',
     })
 
     ctx.body = {
