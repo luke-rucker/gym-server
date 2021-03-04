@@ -28,6 +28,9 @@ sessions.get('/', async function (ctx) {
                 },
             },
         },
+        orderBy: {
+            start: 'asc',
+        },
     })
 })
 
