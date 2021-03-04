@@ -26,7 +26,25 @@ members.post('/', async function (ctx) {
 })
 
 members.get('/', async function (ctx) {
-    ctx.body = await db.member.findMany()
+    let filter = []
+
+    if (ctx.query.search) {
+        const searchableFields = ['firstName', 'lastName', 'email']
+        filter = searchableFields.map((field) => ({
+            [field]: { contains: ctx.query.search, mode: 'insensitive' },
+        }))
+    }
+
+    ctx.body = await db.member.findMany({
+        ...(filter.length > 0 ? { where: { OR: filter } } : null),
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            profileImageUrl: true,
+        },
+    })
 })
 
 members.get('/:memberId', async function (ctx) {
