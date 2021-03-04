@@ -32,6 +32,7 @@ auth.post('/login', async function (ctx) {
         maxAge: expiresAt,
         path: '/api',
         sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
     })
 
     ctx.body = {
