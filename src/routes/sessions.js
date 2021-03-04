@@ -4,7 +4,21 @@ const db = require('../db')
 const sessions = new Router()
 
 sessions.get('/', async function (ctx) {
-    ctx.body = await db.session.findMany()
+    const query = []
+
+    switch (ctx.query.status) {
+        case 'active':
+            query.push({ finish: { equals: null } })
+            break
+        case 'finished':
+            query.push({ finish: { not: null } })
+    }
+
+    if (query.length > 0) {
+        ctx.body = await db.session.findMany({ where: { AND: query } })
+    } else {
+        ctx.body = await db.session.findMany()
+    }
 })
 
 sessions.delete('/:sessionId', async function (ctx) {
