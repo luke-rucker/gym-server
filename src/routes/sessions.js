@@ -14,11 +14,21 @@ sessions.get('/', async function (ctx) {
             query.push({ finish: { not: null } })
     }
 
-    if (query.length > 0) {
-        ctx.body = await db.session.findMany({ where: { AND: query } })
-    } else {
-        ctx.body = await db.session.findMany()
-    }
+    ctx.body = await db.session.findMany({
+        ...(query.length > 0 ? { where: { AND: query } } : null),
+        select: {
+            id: true,
+            start: true,
+            finish: true,
+            member: {
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                },
+            },
+        },
+    })
 })
 
 sessions.delete('/:sessionId', async function (ctx) {
