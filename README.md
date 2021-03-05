@@ -1,7 +1,9 @@
 # gym-server
+
 Koa and Prisma powered Node.js backend for jub-gym
 
 # Getting started
+
 To get the server running locally:
 
 - Clone this repo

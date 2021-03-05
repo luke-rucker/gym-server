@@ -6,8 +6,8 @@ const routes = require('./routes')
 const isProduction = process.env.NODE_ENV === 'production'
 
 if (!isProduction) {
-    require('dotenv').config()
-    require('./db/seed')()
+  require('dotenv').config()
+  require('./db/seed')()
 }
 
 const app = new Koa()
@@ -17,9 +17,9 @@ app.use(bodyParser())
 app.use(errorHandler({ exposeStack: !isProduction }))
 
 app.on('error', function (err, ctx) {
-    if (ctx.status >= 500) {
-        console.error(err)
-    }
+  if (ctx.status >= 500) {
+    console.error(err)
+  }
 })
 
 app.use(routes)

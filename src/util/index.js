@@ -1,4 +1,4 @@
 module.exports = {
-    ...require('./password'),
-    ...require('./token'),
+  ...require('./password'),
+  ...require('./token'),
 }
