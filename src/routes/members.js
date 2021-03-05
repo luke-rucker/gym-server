@@ -70,6 +70,16 @@ members.delete('/:memberId', async function (ctx) {
 })
 
 members.post('/:memberId/sessions', async function (ctx) {
+  const activeSession = await db.session.findFirst({
+    where: {
+      AND: [
+        { memberId: parseInt(ctx.params.memberId) },
+        { finish: { equals: null } },
+      ],
+    },
+  })
+  ctx.assert(!activeSession, 400, 'Member is already in the gym.')
+
   const createdSession = await db.session.create({
     data: {
       member: { connect: { id: parseInt(ctx.params.memberId) } },
