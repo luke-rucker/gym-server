@@ -91,10 +91,16 @@ members.post('/:memberId/sessions', async function (ctx) {
 })
 
 members.get('/:memberId/sessions', async function (ctx) {
-  ctx.body = await db.session.findMany({
-    where: { memberId: parseInt(ctx.params.memberId) },
-    select: { id: true, start: true, finish: true },
+  const memberId = parseInt(ctx.params.memberId)
+
+  const member = await db.member.findUnique({
+    where: { id: memberId },
+    include: { sessions: true },
   })
+
+  ctx.assert(member, 404, 'Member does not exist.')
+
+  ctx.body = member.sessions
 })
 
 module.exports = members.routes()
