@@ -104,7 +104,12 @@ members.get('/:memberId/sessions', async function (ctx) {
   ctx.body = await db.session.findMany({
     where: { memberId: parseInt(ctx.params.memberId), AND: query },
     select: { id: true, start: true, finish: true },
-    orderBy: { start: 'desc' },
+    orderBy: {
+      start:
+        ctx.query.sort === 'asc' || ctx.query.sort === 'desc'
+          ? ctx.query.sort
+          : 'desc',
+    },
   })
 })
 
