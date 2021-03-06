@@ -29,7 +29,10 @@ sessions.get('/', async function (ctx) {
       },
     },
     orderBy: {
-      start: 'asc',
+      start:
+        ctx.query.sort === 'asc' || ctx.query.sort === 'desc'
+          ? ctx.query.sort
+          : 'desc',
     },
   })
 })
