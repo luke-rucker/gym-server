@@ -1,47 +1,47 @@
-datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+generator client {
+  provider = "prisma-client-js"
 }
 
-generator client {
-    provider = "prisma-client-js"
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Member {
-    id              Int       @id @default(autoincrement())
-    firstName       String
-    lastName        String
-    email           String    @unique
-    profileImageUrl String?
-    sessions        Session[]
-    createdByUserId Int
-    createdBy       User      @relation(fields: [createdByUserId], references: [id])
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
+  id              Int       @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  email           String    @unique
+  profileImageUrl String?
+  createdByUserId Int
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  createdBy       User      @relation(fields: [createdByUserId], references: [id])
+  sessions        Session[]
 }
 
 model Session {
-    id       Int       @id @default(autoincrement())
-    memberId Int
-    member   Member    @relation(fields: [memberId], references: [id])
-    start    DateTime  @default(now())
-    finish   DateTime?
-}
-
-enum Role {
-    ADVISOR
-    ADMIN
+  id       Int       @id @default(autoincrement())
+  memberId Int
+  start    DateTime  @default(now())
+  finish   DateTime?
+  member   Member    @relation(fields: [memberId], references: [id])
 }
 
 model User {
-    id              Int      @id @default(autoincrement())
-    firstName       String
-    lastName        String
-    email           String   @unique
-    passwordHash    String
-    profileImageUrl String?
-    role            Role
-    createdMembers  Member[]
-    createdAt       DateTime @default(now())
-    updatedAt       DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  email           String   @unique
+  passwordHash    String
+  profileImageUrl String?
+  role            Role
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdMembers  Member[]
+}
+
+enum Role {
+  ADVISOR
+  ADMIN
 }
