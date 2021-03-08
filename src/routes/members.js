@@ -61,11 +61,8 @@ members.delete('/:memberId', async function (ctx) {
   const member = await db.member.findUnique({ where: { id: memberId } })
   ctx.assert(member, 404, 'Member does not exist.')
 
-  await db.member.delete({
-    where: {
-      id: memberId,
-    },
-  })
+  // Bypass prisma query engine until https://github.com/prisma/prisma/issues/4711 is implemented
+  await db.$executeRaw`DELETE FROM "Member" WHERE id=${memberId};`
   ctx.status = 204
 })
 
