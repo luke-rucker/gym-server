@@ -50,6 +50,23 @@ members.get('/', async function (ctx) {
 members.get('/:memberId', async function (ctx) {
   const member = await db.member.findUnique({
     where: { id: parseInt(ctx.params.memberId) },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      profileImageUrl: true,
+      createdAt: true,
+      updatedAt: true,
+      createdBy: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          profileImageUrl: true,
+        },
+      },
+    },
   })
   ctx.assert(member, 404, 'Member does not exist.')
   ctx.body = member
