@@ -38,15 +38,12 @@ async function downloadFile(key) {
   return await s3.send(new GetObjectCommand(downloadParams))
 }
 
-async function uploadMemberProfileImage(memberId, image) {
-  const fileType = image.name.split('.')[1]
-  const fileName = `${memberId}.${fileType}`
+async function uploadMemberProfileImage(fileName, image) {
   await uploadFile(`members/${fileName}`, image)
-  return fileName
 }
 
-async function downloadMemberProfileImage(profileImage) {
-  return await downloadFile(`members/${profileImage}`)
+async function downloadMemberProfileImage(fileName) {
+  return await downloadFile(`members/${fileName}`)
 }
 
 module.exports = { uploadMemberProfileImage, downloadMemberProfileImage }

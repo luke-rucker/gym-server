@@ -17,22 +17,23 @@ members.post('/', async function (ctx) {
     `A member with the email ${ctx.request.body.email} already exists.`
   )
 
+  const { firstName, lastName, ...rest } = ctx.request.body
+  const { profileImage } = ctx.request.files
+
   const newMember = await db.member.create({
     data: {
-      ...ctx.request.body,
+      firstName,
+      lastName,
+      ...rest,
+      profileImage: profileImage
+        ? `${firstName}-${lastName}.${profileImage.name.split('.')[1]}` // firstName-lastName.fileType
+        : null,
       createdBy: { connect: { id: ctx.state.user.id } },
     },
   })
 
-  if (ctx.request.files.profileImage) {
-    const fileName = await uploadMemberProfileImage(
-      newMember.id,
-      ctx.request.files.profileImage
-    )
-    await db.member.update({
-      where: { id: newMember.id },
-      data: { profileImage: fileName },
-    })
+  if (profileImage) {
+    await uploadMemberProfileImage(newMember.profileImage, profileImage)
   }
 
   ctx.status = 201
