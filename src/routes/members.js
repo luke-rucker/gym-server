@@ -1,9 +1,6 @@
 const Router = require('@koa/router')
 const db = require('../db')
-const {
-  uploadMemberProfileImage,
-  downloadMemberProfileImage,
-} = require('../util')
+const { S3 } = require('../util')
 
 const members = new Router()
 
@@ -26,14 +23,15 @@ members.post('/', async function (ctx) {
       lastName,
       ...rest,
       profileImage: profileImage
-        ? `${firstName}-${lastName}.${profileImage.name.split('.')[1]}` // firstName-lastName.fileType
+        ? `members/${firstName}-${lastName}.${profileImage.name.split('.')[1]}` // firstName-lastName.fileType
         : null,
       createdBy: { connect: { id: ctx.state.user.id } },
     },
   })
 
   if (profileImage) {
-    await uploadMemberProfileImage(newMember.profileImage, profileImage)
+    const s3 = new S3()
+    await s3.uploadFile(newMember.profileImage, profileImage)
   }
 
   ctx.status = 201

@@ -12,5 +12,6 @@ router.use('/auth', require('./auth'))
 router.use('/users', isAuth(), require('./users'))
 router.use('/members', isAuth(), require('./members'))
 router.use('/sessions', isAuth(), require('./sessions'))
+router.use('/images', isAuth(), require('./images'))
 
 module.exports = router.routes()

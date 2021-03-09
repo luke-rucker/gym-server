@@ -1,5 +1,5 @@
 module.exports = {
   ...require('./password'),
   ...require('./token'),
-  ...require('./image'),
+  S3: require('./s3'),
 }
