@@ -1,9 +1,10 @@
 const Router = require('@koa/router')
+const { IS_PROD } = require('../constants')
 const isAuth = require('../middleware/is-auth')
 
 // Add /api prefix in environments other than production, where it will be added via a proxy
 const router = new Router({
-  prefix: process.env.NODE_ENV !== 'production' ? '/api' : '',
+  prefix: !IS_PROD ? '/api' : '',
 })
 
 router.use('/gym', require('./gym'))

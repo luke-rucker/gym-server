@@ -1,5 +1,6 @@
 const Router = require('@koa/router')
 const db = require('../db')
+const { uploadMemberProfileImage } = require('../util')
 
 const members = new Router()
 
@@ -16,9 +17,15 @@ members.post('/', async function (ctx) {
   const newMember = await db.member.create({
     data: {
       ...ctx.request.body,
+      hasProfileImage: !!ctx.request.files.profileImage,
       createdBy: { connect: { id: ctx.state.user.id } },
     },
   })
+
+  if (ctx.request.files.profileImage) {
+    await uploadMemberProfileImage(newMember.id, ctx.request.files.profileImage)
+  }
+
   ctx.status = 201
   ctx.body = {
     id: newMember.id,
@@ -42,7 +49,7 @@ members.get('/', async function (ctx) {
       firstName: true,
       lastName: true,
       email: true,
-      profileImageUrl: true,
+      hasProfileImage: true,
     },
   })
 })
@@ -55,7 +62,7 @@ members.get('/:memberId', async function (ctx) {
       firstName: true,
       lastName: true,
       email: true,
-      profileImageUrl: true,
+      hasProfileImage: true,
       createdAt: true,
       updatedAt: true,
       createdBy: {
@@ -77,6 +84,8 @@ members.delete('/:memberId', async function (ctx) {
 
   const member = await db.member.findUnique({ where: { id: memberId } })
   ctx.assert(member, 404, 'Member does not exist.')
+
+  // TODO: delete profile image from S3
 
   // Bypass prisma query engine until https://github.com/prisma/prisma/issues/4711 is implemented
   await db.$executeRaw`DELETE FROM "Member" WHERE id=${memberId};`
