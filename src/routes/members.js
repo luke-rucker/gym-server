@@ -23,7 +23,7 @@ members.post('/', async function (ctx) {
       lastName,
       ...rest,
       profileImage: profileImage
-        ? `members/${firstName}-${lastName}.${profileImage.name.split('.')[1]}` // firstName-lastName.fileType
+        ? `members/${firstName}-${lastName}.${profileImage.name.split('.')[1]}` // members/firstName-lastName.fileType
         : null,
       createdBy: { connect: { id: ctx.state.user.id } },
     },
