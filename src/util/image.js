@@ -39,11 +39,14 @@ async function downloadFile(key) {
 }
 
 async function uploadMemberProfileImage(memberId, image) {
-  return await uploadFile(`members/${memberId}`, image)
+  const fileType = image.name.split('.')[1]
+  const fileName = `${memberId}.${fileType}`
+  await uploadFile(`members/${fileName}`, image)
+  return fileName
 }
 
-async function downloadMemberProfileImage(memberId) {
-  return await downloadFile(`members/${memberId}`)
+async function downloadMemberProfileImage(profileImage) {
+  return await downloadFile(`members/${profileImage}`)
 }
 
 module.exports = { uploadMemberProfileImage, downloadMemberProfileImage }

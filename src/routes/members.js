@@ -1,6 +1,9 @@
 const Router = require('@koa/router')
 const db = require('../db')
-const { uploadMemberProfileImage } = require('../util')
+const {
+  uploadMemberProfileImage,
+  downloadMemberProfileImage,
+} = require('../util')
 
 const members = new Router()
 
@@ -17,13 +20,19 @@ members.post('/', async function (ctx) {
   const newMember = await db.member.create({
     data: {
       ...ctx.request.body,
-      hasProfileImage: !!ctx.request.files.profileImage,
       createdBy: { connect: { id: ctx.state.user.id } },
     },
   })
 
   if (ctx.request.files.profileImage) {
-    await uploadMemberProfileImage(newMember.id, ctx.request.files.profileImage)
+    const fileName = await uploadMemberProfileImage(
+      newMember.id,
+      ctx.request.files.profileImage
+    )
+    await db.member.update({
+      where: { id: newMember.id },
+      data: { profileImage: fileName },
+    })
   }
 
   ctx.status = 201
@@ -49,7 +58,7 @@ members.get('/', async function (ctx) {
       firstName: true,
       lastName: true,
       email: true,
-      hasProfileImage: true,
+      profileImage: true,
     },
   })
 })
@@ -62,7 +71,7 @@ members.get('/:memberId', async function (ctx) {
       firstName: true,
       lastName: true,
       email: true,
-      hasProfileImage: true,
+      profileImage: true,
       createdAt: true,
       updatedAt: true,
       createdBy: {
@@ -70,7 +79,7 @@ members.get('/:memberId', async function (ctx) {
           id: true,
           firstName: true,
           lastName: true,
-          profileImageUrl: true,
+          profileImage: true,
         },
       },
     },
@@ -79,9 +88,28 @@ members.get('/:memberId', async function (ctx) {
   ctx.body = member
 })
 
-members.delete('/:memberId', async function (ctx) {
+members.get('/:memberId/profileImage', async function (ctx) {
   const memberId = parseInt(ctx.params.memberId)
 
+  const member = await db.member.findUnique({
+    where: { id: memberId },
+    select: { profileImage: true },
+  })
+
+  ctx.assert(member, 404, 'Member does not exist.')
+  ctx.assert(member.profileImage, 400, 'Member does not have a profile image.')
+
+  const image = await downloadMemberProfileImage(member.profileImage)
+
+  ctx.response.set(
+    'Content-Disposition',
+    `attachment; filename=${member.profileImage}`
+  )
+  ctx.body = image.Body
+})
+
+members.delete('/:memberId', async function (ctx) {
+  const memberId = parseInt(ctx.params.memberId)
   const member = await db.member.findUnique({ where: { id: memberId } })
   ctx.assert(member, 404, 'Member does not exist.')
 

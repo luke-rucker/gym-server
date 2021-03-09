@@ -22,7 +22,7 @@ const userSelect = {
   firstName: true,
   lastName: true,
   email: true,
-  hasProfileImage: true,
+  profileImage: true,
   role: true,
   createdAt: true,
   updatedAt: true,
@@ -42,7 +42,7 @@ users.get('/me', async function (ctx) {
       firstName: true,
       lastName: true,
       email: true,
-      hasProfileImage: true,
+      profileImage: true,
       role: true,
     },
   })

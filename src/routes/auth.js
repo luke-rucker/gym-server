@@ -12,11 +12,7 @@ auth.post('/login', async function (ctx) {
     where: { email: email },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
       passwordHash: true,
-      profileImageUrl: true,
       role: true,
     },
   })
