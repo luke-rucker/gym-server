@@ -101,10 +101,10 @@ members.get('/:memberId/profileImage', async function (ctx) {
 
   const image = await downloadMemberProfileImage(member.profileImage)
 
-  ctx.response.set(
-    'Content-Disposition',
-    `attachment; filename=${member.profileImage}`
-  )
+  ctx.response.set({
+    'Cache-Control': `max-age=${60 * 10}`, // 10 min
+    'Content-Disposition': `attachment; filename=${member.profileImage}`,
+  })
   ctx.body = image.Body
 })
 
