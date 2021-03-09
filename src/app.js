@@ -1,20 +1,19 @@
 const Koa = require('koa')
-const bodyParser = require('koa-bodyparser')
+const koaBody = require('koa-body')
 const errorHandler = require('./middleware/error-handler')
 const routes = require('./routes')
+const { IS_PROD } = require('./constants')
 
-const isProduction = process.env.NODE_ENV === 'production'
-
-if (!isProduction) {
+if (!IS_PROD) {
   require('dotenv').config()
   require('./db/seed')()
 }
 
 const app = new Koa()
 
-app.use(bodyParser())
+app.use(koaBody({ multipart: true }))
 
-app.use(errorHandler({ exposeStack: !isProduction }))
+app.use(errorHandler({ exposeStack: !IS_PROD }))
 
 app.on('error', function (err, ctx) {
   if (ctx.status >= 500) {

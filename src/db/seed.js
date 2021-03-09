@@ -7,8 +7,6 @@ const santa = {
   firstName: 'Santa',
   lastName: 'Claus',
   email: 'santa@moretoys4u.com',
-  profileImageUrl:
-    'https://pbs.twimg.com/profile_images/1316013567305342977/2wd-FZ63_400x400.jpg',
   password: 'hohoho',
   role: 'ADMIN',
 }

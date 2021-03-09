@@ -1,4 +1,5 @@
 const Router = require('@koa/router')
+const { IS_PROD } = require('../constants')
 const db = require('../db')
 const { verifyPassword, createToken } = require('../util')
 
@@ -11,11 +12,7 @@ auth.post('/login', async function (ctx) {
     where: { email: email },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
       passwordHash: true,
-      profileImageUrl: true,
       role: true,
     },
   })
@@ -32,7 +29,7 @@ auth.post('/login', async function (ctx) {
     maxAge: expiresAt,
     path: '/api',
     sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production',
+    secure: IS_PROD,
   })
 
   ctx.body = {

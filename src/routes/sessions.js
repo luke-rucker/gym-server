@@ -25,7 +25,7 @@ sessions.get('/', async function (ctx) {
           id: true,
           firstName: true,
           lastName: true,
-          profileImageUrl: true,
+          profileImage: true,
         },
       },
     },

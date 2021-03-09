@@ -6,12 +6,13 @@
   "author": "Luke Rucker <ruckerlh@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.8.0",
     "@koa/router": "^10.0.0",
     "@prisma/client": "^2.18.0",
     "bcrypt": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
-    "koa-bodyparser": "^4.3.0"
+    "koa-body": "^4.2.0"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
