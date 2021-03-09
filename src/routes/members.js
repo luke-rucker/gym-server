@@ -87,26 +87,6 @@ members.get('/:memberId', async function (ctx) {
   ctx.body = member
 })
 
-members.get('/:memberId/profileImage', async function (ctx) {
-  const memberId = parseInt(ctx.params.memberId)
-
-  const member = await db.member.findUnique({
-    where: { id: memberId },
-    select: { profileImage: true },
-  })
-
-  ctx.assert(member, 404, 'Member does not exist.')
-  ctx.assert(member.profileImage, 400, 'Member does not have a profile image.')
-
-  const image = await downloadMemberProfileImage(member.profileImage)
-
-  ctx.response.set({
-    'Cache-Control': `max-age=${60 * 10}`, // 10 min
-    'Content-Disposition': `attachment; filename=${member.profileImage}`,
-  })
-  ctx.body = image.Body
-})
-
 members.delete('/:memberId', async function (ctx) {
   const memberId = parseInt(ctx.params.memberId)
   const member = await db.member.findUnique({ where: { id: memberId } })
