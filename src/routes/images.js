@@ -20,6 +20,8 @@ images.get('/:path*', async function (ctx) {
   } catch (error) {
     if (error.$metadata.httpStatusCode === 404) {
       ctx.throw(404, 'Image does not exist.')
+    } else {
+      throw error
     }
   }
 })
