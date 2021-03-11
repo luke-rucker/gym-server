@@ -15,24 +15,37 @@ members.post('/', async function (ctx) {
   )
 
   const { firstName, lastName, ...rest } = ctx.request.body
-  const { profileImage } = ctx.request.files
+  let profileImagePath = null
+
+  if (ctx.request.files.profileImage) {
+    const { profileImage } = ctx.request.files
+
+    const fileExtension = profileImage.name.split('.')[1]
+    const validFileType =
+      ['png', 'jpeg'].includes(fileExtension) &&
+      ['image/png', 'image/jpeg'].includes(profileImage.type)
+
+    ctx.assert(
+      validFileType,
+      400,
+      'Only .png or .jpeg profile images are allowed.'
+    )
+
+    profileImagePath = `members/${firstName}-${lastName}.${fileExtension}`
+
+    const s3 = new S3()
+    await s3.uploadFile(profileImagePath, profileImage)
+  }
 
   const newMember = await db.member.create({
     data: {
       firstName,
       lastName,
       ...rest,
-      profileImage: profileImage
-        ? `members/${firstName}-${lastName}.${profileImage.name.split('.')[1]}` // members/firstName-lastName.fileType
-        : null,
+      profileImage: profileImagePath,
       createdBy: { connect: { id: ctx.state.user.id } },
     },
   })
-
-  if (profileImage) {
-    const s3 = new S3()
-    await s3.uploadFile(newMember.profileImage, profileImage)
-  }
 
   ctx.status = 201
   ctx.body = {

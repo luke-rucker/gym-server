@@ -12,7 +12,7 @@ images.get('/:path*', async function (ctx) {
     const file = await s3.downloadFile(ctx.params.path)
 
     ctx.response.set({
-      'Cache-Control': `max-age=${60 * 10}`, // 10 min
+      'Cache-Control': `max-age=${60 * 60 * 24}`, // 1 day
       'Content-Disposition': `attachment; filename=${fileName}`,
     })
     ctx.body = file.Body
