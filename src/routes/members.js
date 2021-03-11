@@ -22,7 +22,7 @@ members.post('/', async function (ctx) {
 
     const fileExtension = profileImage.name.split('.')[1]
     const validFileType =
-      ['png', 'jpeg'].includes(fileExtension) &&
+      ['png', 'jpeg'].includes(fileExtension) ||
       ['image/png', 'image/jpeg'].includes(profileImage.type)
 
     ctx.assert(
