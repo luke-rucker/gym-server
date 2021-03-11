@@ -71,6 +71,7 @@ members.get('/', async function (ctx) {
       lastName: true,
       email: true,
       profileImage: true,
+      createdAt: true,
     },
   })
 })
